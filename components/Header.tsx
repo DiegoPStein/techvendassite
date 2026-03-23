@@ -24,7 +24,7 @@ export default function Header() {
             <Terminal size={22} />
           </div>
           <h1 className="text-xl font-black tracking-tighter text-slate-900">
-            Text<span className="text-blue-600">Commander</span>
+            Tech<span className="text-blue-600">Corp</span>
           </h1>
         </div>
 

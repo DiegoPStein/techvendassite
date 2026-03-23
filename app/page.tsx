@@ -1,7 +1,9 @@
-import Link from "next/link";
-import { ShoppingCart, ArrowRight, ShieldCheck, Zap, Terminal } from "lucide-react";
+"use client";
 
-// Agora usando os seus produtos reais
+import { useRef } from "react";
+import Link from "next/link";
+import { ArrowRight, ArrowLeft, ShieldCheck, Zap, Terminal, Sparkles } from "lucide-react";
+
 const produtos = [
   { 
     id: 'textcommander-lite', 
@@ -15,83 +17,162 @@ const produtos = [
     slug: 'textcommander-pro', 
     nome: 'TextCommander Pro', 
     preco: 39.90, 
-    descricao: 'Potência máxima com IA avançada para comandos complexos e fluxos de trabalho.' 
+    descricao: 'Potência máxima de automação de textos com IA avançada para comandos complexos e fluxos de trabalho.' 
   },
+  { 
+    id: 'textcommander-litex', 
+    slug: 'textcommander-litex', 
+    nome: 'TextCommander LiteX', 
+    preco: 29.90, 
+    descricao: 'Versão free do TextCommander Lite sem precisar instalar e diretamente no seu navegador.' 
+  },
+  // Quando quiser adicionar mais, basta colocar novos objetos aqui embaixo:
 ];
 
 export default function HomePage() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direcao: "esquerda" | "direita") => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current;
+      const scrollAmount = clientWidth * 0.8; // Move 80% da tela para um scroll suave
+      
+      scrollRef.current.scrollTo({
+        left: direcao === "direita" ? scrollLeft + scrollAmount : scrollLeft - scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
-    <main className="min-h-screen bg-white text-slate-900">
+    <main className="min-h-screen bg-[#FDFDFF] text-slate-900 selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden">
+      
+      {/* --- EFEITO DE FUNDO TECNOLÓGICO --- */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-blue-50/50 via-transparent to-transparent -z-10" />
+
       {/* --- HERO SECTION --- */}
-      <section className="px-6 py-20 text-center max-w-5xl mx-auto">
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 italic">
-          Text<span className="text-blue-600">Commander</span>
+      <section className="px-6 pt-32 pb-20 text-center max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000">
+        <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 px-4 py-1.5 rounded-full mb-8 shadow-sm">
+          <Sparkles size={14} className="text-blue-600 animate-pulse" />
+          <span className="text-[10px] font-black text-blue-700 uppercase tracking-[0.2em]">Sistemas de Próxima Geração</span>
+        </div>
+        
+        <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.9]">
+          Tech<span className="text-blue-600 drop-shadow-[0_0_15px_rgba(37,99,235,0.2)]">Corp</span>
         </h1>
-        <p className="text-lg text-slate-600 mb-10 max-w-2xl mx-auto">
-          Domine seus textos com comandos inteligentes. A ferramenta definitiva para quem busca velocidade e precisão.
+        
+        <p className="text-lg md:text-xl text-slate-500 mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
+          Sediada no Brasil, a TechCorp desenvolve tecnologias que simplificam o complexo. Transformamos fluxos de trabalho através de softwares intuitivos de alta performance.
         </p>
-        <div className="flex justify-center gap-4">
-          <a href="#produtos" className="bg-slate-900 text-white px-8 py-3 rounded-full font-medium hover:bg-slate-800 transition shadow-lg">
-            Ver Versões
+        
+        <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <a href="#produtos" className="bg-slate-900 text-white px-10 py-4 rounded-2xl font-bold hover:bg-blue-600 hover:shadow-[0_20px_40px_-10px_rgba(37,99,235,0.4)] transition-all duration-300 transform hover:-translate-y-1 active:scale-95">
+            Explorar Softwares
           </a>
-          <button className="border border-slate-200 px-8 py-3 rounded-full font-medium hover:bg-slate-50 transition">
-            Documentação
+          <button className="bg-white border border-slate-200 px-10 py-4 rounded-2xl font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
+            Documentações
           </button>
         </div>
       </section>
 
-      {/* --- DIFERENCIAIS --- */}
-      <section className="bg-slate-50 py-16 px-6">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
-          <div className="flex flex-col items-center p-6 text-center bg-white rounded-2xl shadow-sm">
-            <Zap className="text-blue-600 mb-4" size={32} />
-            <h3 className="font-bold mb-2 text-slate-800">Alta Velocidade</h3>
-            <p className="text-sm text-slate-500">Processamento instantâneo de comandos sem delay.</p>
+      {/* --- DIFERENCIAIS (GLASSMORPHISM) --- */}
+      <section className="py-16 px-6">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
+          <div className="p-8 bg-white/40 backdrop-blur-md border border-white rounded-[32px] shadow-sm hover:shadow-md transition-all group">
+            <div className="bg-blue-600 w-12 h-12 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-200 group-hover:rotate-12 transition-transform">
+              <Zap className="text-white" size={24} />
+            </div>
+            <h3 className="font-black text-lg mb-3 tracking-tight">Alta Velocidade</h3>
+            <p className="text-sm text-slate-500 leading-relaxed font-medium">Execute tarefas críticas instantaneamente com motores de processamento otimizados.</p>
           </div>
-          <div className="flex flex-col items-center p-6 text-center bg-white rounded-2xl shadow-sm">
-            <ShieldCheck className="text-blue-600 mb-4" size={32} />
-            <h3 className="font-bold mb-2 text-slate-800">Segurança Total</h3>
-            <p className="text-sm text-slate-500">Seus dados de texto nunca saem do seu ambiente local.</p>
+
+          <div className="p-8 bg-white/40 backdrop-blur-md border border-white rounded-[32px] shadow-sm hover:shadow-md transition-all group">
+            <div className="bg-slate-900 w-12 h-12 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-slate-200 group-hover:rotate-12 transition-transform">
+              <ShieldCheck className="text-white" size={24} />
+            </div>
+            <h3 className="font-black text-lg mb-3 tracking-tight">Estabilidade</h3>
+            <p className="text-sm text-slate-500 leading-relaxed font-medium">Sistemas resilientes focados em segurança e integridade de dados corporativos.</p>
           </div>
-          <div className="flex flex-col items-center p-6 text-center bg-white rounded-2xl shadow-sm">
-            <Terminal className="text-blue-600 mb-4" size={32} />
-            <h3 className="font-bold mb-2 text-slate-800">Interface Clean</h3>
-            <p className="text-sm text-slate-500">Feito por desenvolvedores para desenvolvedores.</p>
+
+          <div className="p-8 bg-white/40 backdrop-blur-md border border-white rounded-[32px] shadow-sm hover:shadow-md transition-all group">
+            <div className="bg-blue-500 w-12 h-12 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-100 group-hover:rotate-12 transition-transform">
+              <Terminal className="text-white" size={24} />
+            </div>
+            <h3 className="font-black text-lg mb-3 tracking-tight">Interface Clean</h3>
+            <p className="text-sm text-slate-500 leading-relaxed font-medium">Design minimalista focado na experiência do usuário e na redução de ruídos cognitivos.</p>
           </div>
         </div>
       </section>
 
-      {/* --- PRODUTOS --- */}
-      <section id="produtos" className="py-20 px-6 max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold mb-12 text-center">Escolha sua versão</h2>
+      {/* --- SEÇÃO DE PRODUTOS COM ROLAGEM --- */}
+      <section id="produtos" className="py-24 px-6 max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+          <div className="text-left">
+            <h2 className="text-4xl font-black tracking-tight mb-2">Escolha seu Poder</h2>
+            <div className="w-12 h-1.5 bg-blue-600 rounded-full" />
+          </div>
+
+          {/* BOTÕES DE NAVEGAÇÃO */}
+          <div className="flex gap-2">
+            <button 
+              onClick={() => scroll("esquerda")}
+              className="p-4 rounded-2xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-95 shadow-sm"
+              aria-label="Anterior"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <button 
+              onClick={() => scroll("direita")}
+              className="p-4 rounded-2xl bg-slate-900 text-white hover:bg-blue-600 transition-all active:scale-95 shadow-md"
+              aria-label="Próximo"
+            >
+              <ArrowRight size={20} />
+            </button>
+          </div>
+        </div>
         
-        {/* Ajustado para 2 colunas para os seus 2 produtos ficarem harmônicos */}
-        <div className="grid md:grid-cols-2 gap-8">
+        {/* CONTAINER DO CARROSSEL */}
+        <div 
+          ref={scrollRef}
+          className="flex gap-8 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-10 px-2"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
           {produtos.map((prod) => (
-            <div key={prod.id} className="group border border-slate-100 rounded-2xl p-8 hover:shadow-2xl hover:border-blue-100 transition-all duration-300 bg-white flex flex-col">
-              <div className="bg-blue-50 w-12 h-12 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                <ArrowRight size={20} />
+            <div 
+              key={prod.id} 
+              className="snap-start min-w-[85vw] md:min-w-[450px] group relative bg-white border border-slate-100 rounded-[40px] p-10 hover:border-blue-400 transition-all duration-500 flex flex-col shadow-sm hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)]"
+            >
+              <div className="absolute top-6 right-10 text-slate-100 group-hover:text-blue-50 transition-colors pointer-events-none">
+                <Terminal size={60} />
               </div>
-              <h3 className="text-2xl font-bold mb-2 text-slate-900">{prod.nome}</h3>
-              <p className="text-slate-500 text-sm mb-8 flex-grow leading-relaxed">
+
+              <h3 className="text-3xl font-black mb-4 text-slate-900 z-10">{prod.nome}</h3>
+              <p className="text-slate-500 font-medium mb-12 flex-grow leading-relaxed z-10 pr-10">
                 {prod.descricao}
               </p>
-              <div className="flex items-center justify-between border-t border-slate-50 pt-6">
-                <div className="flex flex-col">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">A partir de</span>
-                  <span className="text-2xl font-black text-slate-900">R$ {prod.preco.toFixed(2)}</span>
+              
+              <div className="flex items-end justify-between z-10 mt-auto">
+                <div>
+                  <span className="block text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mb-1">Licença Vitalícia</span>
+                  <span className="text-3xl font-black text-slate-900 tracking-tight">R$ {prod.preco.toFixed(2)}</span>
                 </div>
+                
                 <Link 
                   href={`/produto/${prod.slug}`}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-blue-700 transition flex items-center gap-2"
+                  className="bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold hover:bg-blue-600 transition-all flex items-center gap-2 group/btn active:scale-95 shadow-lg shadow-slate-100"
                 >
-                  Ver Mais
+                  Saiba mais. <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </div>
           ))}
         </div>
       </section>
+
+      {/* --- FOOTER SIMPLES --- */}
+      <footer className="py-12 border-t border-slate-100 text-center">
+        <p className="text-xs font-black text-slate-300 uppercase tracking-[0.3em]">© 2026 TechCorp Soluções Digitais</p>
+      </footer>
     </main>
   );
 }

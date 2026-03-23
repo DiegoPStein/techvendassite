@@ -15,7 +15,7 @@ export default function Navbar() {
           <div className="bg-blue-600 p-1.5 rounded-lg text-white">
             <Terminal size={20} />
           </div>
-          <span>Text<span className="text-blue-600">Commander</span></span>
+          <span>Tech<span className="text-blue-600">Corp</span></span>
         </Link>
 
         {/* Carrinho com Contador Dinâmico */}

@@ -14,7 +14,7 @@ export default function Footer() {
             <div className="flex items-center gap-2 text-blue-600 mb-4">
               <Terminal size={24} strokeWidth={3} />
               <span className="text-xl font-black tracking-tighter text-slate-900">
-                TEXT<span className="text-blue-600">COMMANDER</span>
+                Tech<span className="text-blue-600">Corp</span>
               </span>
             </div>
             <p className="text-slate-500 text-sm leading-relaxed max-w-sm">
@@ -38,7 +38,7 @@ export default function Footer() {
             <h4 className="font-bold text-slate-900 mb-4">Suporte</h4>
             <ul className="space-y-2 text-sm text-slate-500 font-medium">
               <li className="flex items-center gap-2 italic hover:text-blue-600 cursor-pointer">
-                <Mail size={14} /> suporte@textcommander.com
+                <Mail size={14} /> suporte@techcorp.com
               </li>
               <li><Link href="#" className="hover:text-blue-600 transition">FAQ</Link></li>
               <li><Link href="#" className="hover:text-blue-600 transition">Termos de Uso</Link></li>
@@ -48,7 +48,7 @@ export default function Footer() {
 
         {/* Linha Inferior */}
         <div className="border-t border-slate-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
-          <p>© {anoAtual} TextCommander Store — Todos os direitos reservados.</p>
+          <p>© {anoAtual} TechCorp Store — Todos os direitos reservados.</p>
           <div className="flex gap-6">
              <Github size={18} className="hover:text-slate-900 cursor-pointer transition" />
              <Twitter size={18} className="hover:text-slate-900 cursor-pointer transition" />

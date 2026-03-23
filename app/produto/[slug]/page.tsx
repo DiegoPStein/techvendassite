@@ -8,7 +8,7 @@ type Produto = {
   descricao: string;
 };
 
-type ProdutoSlug = "textcommander-lite" | "textcommander-pro";
+type ProdutoSlug = "textcommander-lite" | "textcommander-pro" | "textcommander-litex";
 
 const produtos: Record<ProdutoSlug, Produto> = {
   "textcommander-lite": {
@@ -22,6 +22,12 @@ const produtos: Record<ProdutoSlug, Produto> = {
     nome: "TextCommander Pro",
     preco: 39.9,
     descricao: "Sistema com IA..."
+  },
+  "textcommander-litex": {
+    id: 'textcommander-litex',
+    nome: 'TextCommander LiteX',
+    preco: 29.90,
+    descricao: 'Versão free do TextCommander Lite sem precisar instalar e diretamente no seu navegador.'
   }
 };
 
