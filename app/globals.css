@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+/* Definimos cores fixas para evitar que o Windows force o modo escuro */
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a; /* Um azul marinho bem escuro (Slate 900) */
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Remova ou comente o bloco @media (prefers-color-scheme: dark) 
+   para o site não ficar preto sozinho */
