@@ -22,6 +22,7 @@ export default function Header() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -29,6 +30,7 @@ export default function Header() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    setUser(null);
     router.push("/");
     router.refresh();
   };
@@ -54,9 +56,9 @@ export default function Header() {
         <Link href="/documentacao" className="hover:text-white transition-colors">Documentação</Link>
         <Link href="/quem-somos" className="hover:text-white transition-colors">Quem Somos</Link>
         
-        {/* APARECE APENAS SE ESTIVER LOGADO */}
+        {/* CORRIGIDO: Agora aponta para /dashboard quando logado */}
         {user && (
-          <Link href="/login" className="text-blue-500 hover:text-blue-400 transition-colors border-l border-slate-800 pl-8 flex items-center gap-2">
+          <Link href="/dashboard" className="text-blue-500 hover:text-blue-400 transition-colors border-l border-slate-800 pl-8 flex items-center gap-2 animate-in fade-in duration-500">
             <LayoutDashboard size={12} />
             Minha Conta
           </Link>
@@ -68,12 +70,17 @@ export default function Header() {
         {loading ? (
           <div className="w-5 h-5 border-2 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
         ) : user ? (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 animate-in fade-in zoom-in-95 duration-300">
             <div className="hidden lg:block text-right">
               <p className="text-[11px] font-bold text-slate-200 truncate max-w-[120px]">{user.email?.split('@')[0]}</p>
               <p className="text-[8px] font-black text-blue-500 uppercase tracking-widest">Sessão Ativa</p>
             </div>
             
+            {/* LINK PARA DASHBOARD TAMBÉM NO MOBILE (CLICANDO NO NOME/ÍCONE) */}
+            <Link href="/dashboard" className="lg:hidden p-2 text-slate-400 hover:text-white transition-colors">
+              <User size={18} />
+            </Link>
+
             <button 
               onClick={handleLogout}
               className="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white p-2.5 rounded-xl transition-all border border-red-500/20 group"
