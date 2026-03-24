@@ -2,16 +2,39 @@
 
 import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react"; // Adicionado
+import { supabase } from "@/lib/supabase"; // Adicionado
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import ModalLogin from "@/components/ModalLogin"; // Importado o modal
 
 export default function CarrinhoPage() {
   const { cart, removeFromCart, updateQuantity } = useCart();
   const router = useRouter();
+  
+  // Estados para controle de acesso
+  const [user, setUser] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Verifica a sessão
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+  }, []);
 
   const total = cart.reduce((acc, item) => {
     return acc + item.preco * item.quantidade;
   }, 0);
+
+  // Função de finalização com a trava moderna
+  const handleFinalizarCompra = () => {
+    if (!user) {
+      setIsModalOpen(true); // Abre o modal em vez do alert
+      return;
+    }
+    router.push("/checkout");
+  };
 
   return (
     <main className="min-h-screen bg-slate-50/50 py-12 px-6">
@@ -51,7 +74,6 @@ export default function CarrinhoPage() {
                   </div>
 
                   <div className="flex items-center gap-6">
-                    {/* Controles de Quantidade */}
                     <div className="flex items-center bg-slate-50 rounded-xl p-1 border border-slate-100">
                       <button 
                         onClick={() => updateQuantity(item.id, item.quantidade - 1)}
@@ -68,7 +90,6 @@ export default function CarrinhoPage() {
                       </button>
                     </div>
 
-                    {/* Botão Remover */}
                     <button 
                       onClick={() => removeFromCart(item.id)}
                       className="p-2 text-slate-300 hover:text-red-500 transition"
@@ -102,7 +123,7 @@ export default function CarrinhoPage() {
               </div>
 
               <button 
-                onClick={() => router.push("/checkout")}
+                onClick={handleFinalizarCompra} // Usando a nova função
                 className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold text-lg hover:bg-blue-600 transition-all shadow-xl shadow-slate-100 active:scale-95"
               >
                 Finalizar Compra
@@ -116,6 +137,12 @@ export default function CarrinhoPage() {
           </div>
         )}
       </div>
+
+      {/* MODAL PARA LOGIN */}
+      <ModalLogin 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </main>
   );
 }

@@ -1,35 +1,12 @@
 import { notFound } from "next/navigation";
 import ProductView from "@/components/ProductView";
+import { createClient } from "@supabase/supabase-js";
 
-type Produto = {
-  id: string;
-  nome: string;
-  preco: number;
-  descricao: string;
-};
-
-type ProdutoSlug = "textcommander-lite" | "textcommander-pro" | "textcommander-litex";
-
-const produtos: Record<ProdutoSlug, Produto> = {
-  "textcommander-lite": {
-    id: "textcommander-lite",
-    nome: "TextCommander Lite",
-    preco: 19.9,
-    descricao: "Sistema inteligente..."
-  },
-  "textcommander-pro": {
-    id: "textcommander-pro",
-    nome: "TextCommander Pro",
-    preco: 39.9,
-    descricao: "Sistema com IA..."
-  },
-  "textcommander-litex": {
-    id: 'textcommander-litex',
-    nome: 'TextCommander LiteX',
-    preco: 29.90,
-    descricao: 'Versão free do TextCommander Lite sem precisar instalar e diretamente no seu navegador.'
-  }
-};
+// 1. Conexão com Supabase (Versão Server-side)
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 type Props = {
   params: Promise<{
@@ -40,14 +17,21 @@ type Props = {
 export default async function Produto({ params }: Props) {
   const { slug } = await params;
 
-  if (!(slug in produtos)) {
+  // 2. Busca o produto direto no banco de dados usando o SLUG da URL
+  const { data: produto, error } = await supabase
+    .from("produtos")
+    .select("*")
+    .eq("slug", slug)
+    .single(); // .single() garante que pegamos apenas UM objeto e não uma lista
+
+  // 3. Se deu erro ou o produto não existe no banco, mostra a página 404
+  if (error || !produto) {
     return notFound();
   }
 
-  const produto = produtos[slug as ProdutoSlug];
-
   return (
-    <main className="p-10">
+    <main className="min-h-screen bg-[#FDFDFF]">
+      {/* 4. Passamos o produto do banco para o seu componente visual */}
       <ProductView produto={produto} />
     </main>
   );

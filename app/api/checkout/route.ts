@@ -12,47 +12,64 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const { cliente, itens, total } = body;
 
-    // 1. SALVAR NO SUPABASE
-    const { error: dbError } = await supabase
+    // 1. Identificação do Usuário
+    const { data: { user } } = await supabase.auth.getUser();
+    const emailDestino = user?.email || cliente?.email;
+
+    // 2. Gerar Chave de Licença única para o pedido
+    const chaveGerada = `TC-${Math.random().toString(36).toUpperCase().substring(2, 10)}`;
+
+    // 3. Salvar na tabela 'pedidos' seguindo sua estrutura real do banco
+    const { data, error: erroDb } = await supabase
       .from("pedidos")
       .insert([
         {
-          cliente_nome: body.cliente.nome,
-          cliente_email: body.cliente.email,
-          itens: body.itens,
-          total: body.total,
-        },
-      ]);
+          cliente_nome: cliente.nome,
+          cliente_email: cliente.email,
+          itens: itens,             // Coluna jsonb que recebe o array de produtos
+          total: total,             // Coluna double precision
+          chave_licenca: chaveGerada, // IMPORTANTE: Rodar o SQL abaixo antes de testar
+        }
+      ])
+      .select();
 
-    if (dbError) throw new Error("Erro ao salvar no banco");
+    if (erroDb) {
+      console.error("Erro Supabase:", erroDb.message);
+      throw new Error(`Erro Supabase: ${erroDb.message}`);
+    }
 
-    // 2. ENVIAR E-MAIL DE ENTREGA
-    // Nota: No plano grátis do Resend sem domínio próprio, 
-    // você só consegue enviar para o seu PRÓPRIO e-mail de cadastro.
-    await resend.emails.send({
-      from: "TextCommander <onboarding@resend.dev>",
-      to: body.cliente.email, // Quando tiver domínio próprio, envia pra qualquer um
-      subject: "🚀 Sua licença do TextCommander chegou!",
-      html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #f9fafb; padding: 40px; border-radius: 20px;">
-          <h1 style="color: #1d4ed8; font-size: 24px;">Olá, ${body.cliente.nome}!</h1>
-          <p style="color: #4b5563; font-size: 16px;">Obrigado por adquirir o <b>TextCommander</b>. Sua licença foi confirmada com sucesso!</p>
-          
-          <div style="background: #ffffff; padding: 20px; border-radius: 15px; margin: 20px 0; border: 1px solid #e5e7eb;">
-            <p style="margin: 0; color: #9ca3af; font-size: 12px; text-transform: uppercase; font-weight: bold;">Seu link de download:</p>
-            <a href="https://seu-link-de-download.com/setup.exe" style="display: inline-block; margin-top: 10px; padding: 12px 24px; background: #1d4ed8; color: #fff; text-decoration: none; border-radius: 10px; font-weight: bold;">BAIXAR AGORA</a>
-          </div>
+    // 4. Enviar e-mail com a Chave de Licença
+    if (emailDestino && process.env.RESEND_API_KEY) {
+      try {
+        await resend.emails.send({
+          from: "TechCorp <onboarding@resend.dev>",
+          to: emailDestino,
+          subject: "🚀 Sua licença TechCorp chegou!",
+          html: `
+            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #fff; padding: 40px; border: 1px solid #eee; border-radius: 20px;">
+              <h1 style="color: #1d4ed8; font-size: 24px;">Olá, ${cliente.nome}!</h1>
+              <p style="color: #444; font-size: 16px;">Sua compra foi confirmada. Aqui está sua chave de acesso:</p>
+              
+              <div style="background: #f3f4f6; padding: 20px; border-radius: 12px; text-align: center; margin: 25px 0; border: 2px dashed #d1d5db;">
+                <code style="font-size: 22px; font-weight: bold; color: #111827; letter-spacing: 2px;">${chaveGerada}</code>
+              </div>
 
-          <p style="color: #9ca3af; font-size: 12px;">Pedido: ${Math.random().toString(36).toUpperCase().substring(2, 10)}</p>
-        </div>
-      `,
-    });
+              <p style="color: #666; font-size: 14px;">Você também pode baixar seus produtos diretamente no seu painel.</p>
+              <a href="${process.env.NEXT_PUBLIC_SITE_URL}/dashboard" style="display: inline-block; padding: 14px 28px; background: #1d4ed8; color: #fff; text-decoration: none; border-radius: 10px; font-weight: bold; margin-top: 10px;">IR PARA O DASHBOARD</a>
+            </div>
+          `,
+        });
+      } catch (mailErr) {
+        console.error("Erro ao enviar e-mail:", mailErr);
+      }
+    }
 
     return NextResponse.json({ success: true });
 
-  } catch (err) {
-    console.error("Erro completo:", err);
-    return NextResponse.json({ success: false }, { status: 500 });
+  } catch (err: any) {
+    console.error("ERRO COMPLETO:", err);
+    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }
